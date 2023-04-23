@@ -4,6 +4,7 @@ import message
 
 class Server:
     __sock = None
+    __callbacks = None
 
     def __init__(self, port, client):
         self.__port = port
@@ -14,6 +15,14 @@ class Server:
         self.__sock = socket.socket()
         self.__sock.bind(address)
         self.__sock.listen(1)
+
+    def register_callback(self, message_type, callback):
+        if self.__callbacks is None:
+            self.__callbacks = {message_type: [callback]}
+        elif message_type not in self.__callbacks.keys():
+            self.__callbacks[message_type] = [callback]
+        else:
+            self.__callbacks[message_type] += [callback];
 
     def run(self):
         self.__listen()
@@ -36,6 +45,11 @@ class Server:
                     self.__client.send(client_address[0], cl_port, err_msg)
                     client.close()
                     continue
+
+                if self.__callbacks is not None and msg.type in self.__callbacks.keys():
+                    for callback in self.__callbacks[msg.type]:
+                        callback(msg)
+
                 print([x for x in msg.calc()])
             except OSError:
                 print("Connection closed")
