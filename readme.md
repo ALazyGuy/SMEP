@@ -36,35 +36,41 @@
 | 0x6   | Error        | SRV  |
 | 0x7   | Error        | CL   |
 
-
-+ **Initial Scan** - message sent to all connected to LAN devices to identify 
-which of them can be connected to the server.
++ **Initial Scan** - message sent to all connected to LAN devices to identify
+  which of them can be connected to the server.
 
   *No fields expected*
 
 
 + **Online** - message sent to the server to indicate that current
-device is online and ready to connect.
+  device is online and ready to connect.
 
   *No fields expected*
 
 
 + **Accepted(Server/Client)** - message sent to device/server means that previous message
-has been accepted and processed successfully(has to be used as response message only).
+  has been accepted and processed successfully(has to be used as response message only).
 
   *No fields expected*
 
 
 + **Update(Server/Client)** - message sent to device/server means that sender's state
-has changed.
+  has changed.
 
   *Fields are specific for each device*
 
 
 + **Error(Server/Client)** - message sent to device/server means that previous message
-processing was failed(has to be used as response message only).
+  processing was failed(has to be used as response message only).
 
-  *Field -> ERROR_CODE*
+  *Field -> ErrorType*
+
+### Error types
+
+| Name            | Value |
+|-----------------|-------|
+| UNKNOWN_DEVICE  | 0x0   |
+| INVALID_MESSAGE | 0x1   |
 
 ---
 

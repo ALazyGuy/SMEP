@@ -1,3 +1,26 @@
+from enum import Enum
+
+VALIDATORS = [
+    lambda msg: msg.fields is None,
+    lambda msg: msg.fields is None
+]
+
+
+class DeviceId(Enum):
+    CONTROLLER = 0x0
+    KETTLE = 0x1
+
+
+class MessageType(Enum):
+    INITIAL_SCAN = 0x0
+    ONLINE = 0x1
+
+
+class ErrorType(Enum):
+    UNKNOWN_DEVICE = 0x0
+    INVALID_MESSAGE = 0x1
+
+
 class Message:
     __fields = None
 
@@ -7,8 +30,9 @@ class Message:
 
     def calc(self):
         result = [self.__device, self.__type]
-        for field in self.__fields:
-            result += field.calc()
+        if self.__fields is not None:
+            for field in self.__fields:
+                result += field.calc()
         return bytearray(result)
 
     def add_field(self, field):
@@ -16,6 +40,14 @@ class Message:
             self.__fields.append(field)
         else:
             self.__fields = [field]
+
+    @property
+    def device(self):
+        return self.__device
+
+    @property
+    def type(self):
+        return self.__type
 
     @property
     def fields(self):
@@ -37,6 +69,8 @@ def decode(message_bytes):
     index = 2
     while index < len(data):
         size = data[index]
+        if index + size >= len(data):
+            break
         field_data = data[(index + 1):(index + size + 1)]
         index += size + 1
         result.add_field(Field(size, field_data))
