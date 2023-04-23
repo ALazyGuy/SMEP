@@ -2,7 +2,13 @@ from enum import Enum
 
 VALIDATORS = [
     lambda msg: msg.fields is None,
-    lambda msg: msg.fields is None
+    lambda msg: msg.fields is None,
+    lambda msg: msg.fields is None,
+    lambda msg: msg.fields is None,
+    lambda msg: msg.fields is None,
+    lambda msg: msg.fields is None,
+    lambda msg: msg.fields is not None and len(msg.fields) == 1,
+    lambda msg: msg.fields is not None and len(msg.fields) == 1
 ]
 
 
@@ -13,7 +19,9 @@ class DeviceId(Enum):
 
 class MessageType(Enum):
     INITIAL_SCAN = 0x0
-    ONLINE = 0x1
+    ONLINE = 0x1,
+    ERROR_SERVER = 0x6,
+    ERROR_CLIENT = 0x7
 
 
 class ErrorType(Enum):
