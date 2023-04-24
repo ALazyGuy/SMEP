@@ -1,30 +1,32 @@
-from enum import Enum
+from enum import IntEnum
 
 VALIDATORS = [
-    lambda msg: msg.fields is None,
-    lambda msg: msg.fields is None,
-    lambda msg: msg.fields is None,
-    lambda msg: msg.fields is None,
-    lambda msg: msg.fields is None,
-    lambda msg: msg.fields is None,
-    lambda msg: msg.fields is not None and len(msg.fields) == 1,
-    lambda msg: msg.fields is not None and len(msg.fields) == 1
+    lambda msg: msg.fields is None and msg.device == 0x0,
+    lambda msg: msg.fields is None and msg.device != 0x0,
+    lambda msg: msg.fields is None and msg.device == 0x0,
+    lambda msg: msg.fields is None and msg.device != 0x0,
+    lambda msg: msg.fields is None and msg.device == 0x0,
+    lambda msg: msg.fields is None and msg.device != 0x0,
+    lambda msg: msg.fields is not None and len(msg.fields) == 1 and msg.device == 0x0,
+    lambda msg: msg.fields is not None and len(msg.fields) == 1 and msg.device != 0x0
 ]
 
 
-class DeviceId(Enum):
+class DeviceId(IntEnum):
     CONTROLLER = 0x0
     KETTLE = 0x1
 
 
-class MessageType(Enum):
+class MessageType(IntEnum):
     INITIAL_SCAN = 0x0
     ONLINE = 0x1,
+    ACCEPTED_SERVER = 0x2,
+    ACCEPTED_CLIENT = 0x3,
     ERROR_SERVER = 0x6,
     ERROR_CLIENT = 0x7
 
 
-class ErrorType(Enum):
+class ErrorType(IntEnum):
     UNKNOWN_DEVICE = 0x0
     INVALID_MESSAGE = 0x1
 
@@ -66,6 +68,14 @@ class Field:
     def __init__(self, size, data: []):
         self.__size = size
         self.__data = data
+
+    @property
+    def data(self):
+        return int.from_bytes(bytes(self.__data), "big")
+
+    @property
+    def raw_data(self):
+        return self.__data
 
     def calc(self):
         return [self.__size] + self.__data
